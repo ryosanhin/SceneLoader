@@ -57,7 +57,6 @@ public class SceneLoader : MonoBehaviour
 		SceneManager.sceneLoaded+=SceneLoaded;
 		
 		SetTransitionCamera();
-		LoadScene("SampleScene");
 	}
 	
     public void LoadScene(string name){
