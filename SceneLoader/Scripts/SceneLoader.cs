@@ -40,13 +40,8 @@ public class SceneLoader : MonoBehaviour
 		gr.enabled=false;
 	}
 	
-	public void LoadScene(int i){
-		StartCoroutine(SceneLoading(i));
-	}
-	
-    public void LoadScene(string name){
-		var scene=SceneManager.GetSceneByName(name);
-		StartCoroutine(SceneLoading(scene.buildIndex));
+	public void LoadScene(int num){
+		StartCoroutine(SceneLoading(num));
 	}
 	
 	IEnumerator SceneLoading(int num){
@@ -61,6 +56,42 @@ public class SceneLoader : MonoBehaviour
 		
 		/*シーンをロード*/
 		AsyncOperation _async=SceneManager.LoadSceneAsync(num);
+		_async.allowSceneActivation=false;
+		
+		float waitTime=0f;
+		
+		while(_async.progress<0.9f || waitTime<defaultLoadingTime){
+			waitTime+=Time.deltaTime;
+			yield return null;
+		}
+		
+		/*シーンを実際にロード*/
+		_async.allowSceneActivation=true;
+		
+		/*ここに画面遷移エフェクトを入れる*/
+		yield return StartCoroutine(TransitionAnima(0));
+		/*ここに画面遷移エフェクトを入れる*/
+		
+		isLoading=false;
+		gr.enabled=false;
+	}
+	
+    public void LoadScene(string name){
+		StartCoroutine(SceneLoading(name));
+	}
+	
+	IEnumerator SceneLoading(string name){
+		if(isLoading)yield break;
+		isLoading=true;
+		
+		gr.enabled=true;
+		
+		/*ここに画面遷移エフェクトを入れる*/
+		yield return StartCoroutine(TransitionAnima(1));
+		/*ここに画面遷移エフェクトを入れる*/
+		
+		/*シーンをロード*/
+		AsyncOperation _async=SceneManager.LoadSceneAsync(name);
 		_async.allowSceneActivation=false;
 		
 		float waitTime=0f;
